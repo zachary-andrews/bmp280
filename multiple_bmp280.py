@@ -1,6 +1,7 @@
 import smbus2
 import bme280
 import time
+import alertlib
 
 def calibrate(numb):
     bus = smbus2.SMBus(numb)
@@ -19,10 +20,12 @@ calibration3 = calibrate(3)
 calibration4 = calibrate(4)
 
 while True:
-    
-    data1 = get_data(3,calibration3)
-    data2 = get_data(4,calibration4)
-    print_data()
+    inside_sensor = get_data(3,calibration3)
+    outside_sensor = get_data(4,calibration4)
+    if inside_sensor.pressure/outside_sensor.pressure > 1.1:
+        print "warning"
+        alert = alertlib.Alert("The pressure sensors are out of sync!")
+        alert.send_to_email("zandrews22@gmail.com --summary Pressure sensors")
     time.sleep(60)
     
 
